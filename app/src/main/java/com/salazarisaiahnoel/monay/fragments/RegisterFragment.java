@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.saiaaaaaaa.cod.Check;
 import com.github.saiaaaaaaa.cod.Convert;
 import com.github.saiaaaaaaa.cod.EasySQL;
 import com.salazarisaiahnoel.monay.R;
@@ -54,10 +55,10 @@ public class RegisterFragment extends Fragment {
         password = view.findViewById(R.id.passwordregister);
         registerbtn = view.findViewById(R.id.registerbtn);
 
-        Email.addValidDomainName("gmail");
-        Email.addValidDomainName("yahoo");
-        Email.addValidDomainName("outlook");
-        Email.addValidDomainExtensions("com");
+        Check.Email.addValidDomainName("gmail");
+        Check.Email.addValidDomainName("yahoo");
+        Check.Email.addValidDomainName("outlook");
+        Check.Email.addValidDomainExtensions("com");
 
         registerbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +76,7 @@ public class RegisterFragment extends Fragment {
                 if (emails.contains(email.getText().toString().toLowerCase())){
                     Toast.makeText(requireContext(), "This email address is already in use.", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (Email.isValid(email.getText().toString().toLowerCase())){
+                    if (Check.Email.isValid(email.getText().toString().toLowerCase())){
                         if (!easySQL.doesTableExist("user_details_db", "user_details_table")){
                             easySQL.createTable("user_details_db", "user_details_table", new String[]{"user_email:text", "money:float"});
                         }
@@ -111,36 +112,5 @@ public class RegisterFragment extends Fragment {
                 requireActivity().getSupportFragmentManager().beginTransaction().remove(registerFragment).commit();
             }
         });
-    }
-
-    public static class Email {
-
-        static List<String> validDomainNames = new ArrayList<>();
-        static List<String> validDomainExtensions = new ArrayList<>();
-
-        public static void addValidDomainName(String str){
-            validDomainNames.add(str);
-        }
-
-        public static void addValidDomainExtensions(String str){
-            validDomainExtensions.add(str);
-        }
-
-        public static boolean isValid(String str){
-            try {
-                String[] domain = str.split("@");
-                String domainName = domain[1].split("\\.")[0];
-                String domainExtension = domain[1].split("\\.")[1];
-                return validDomainNames.contains(domainName) && validDomainExtensions.contains(domainExtension);
-            } catch (Exception exception){
-                return false;
-            }
-        }
-    }
-
-    boolean isValidEmail(String email){
-        boolean f = true;
-
-        return f;
     }
 }
