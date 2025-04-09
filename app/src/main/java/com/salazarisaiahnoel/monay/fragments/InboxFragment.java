@@ -1,5 +1,9 @@
 package com.salazarisaiahnoel.monay.fragments;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,13 +16,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.saiaaaaaaa.cod.EasySQL;
 import com.salazarisaiahnoel.monay.R;
+import com.salazarisaiahnoel.monay.activities.InboxDetails;
 import com.salazarisaiahnoel.monay.adapters.InboxAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class InboxFragment extends Fragment {
+public class InboxFragment extends Fragment implements InboxAdapter.InboxItemOnClick {
+
+    List<String> titles = new ArrayList<>();
+    List<String> descriptions = new ArrayList<>();
+    List<String> dates = new ArrayList<>();
 
     public InboxFragment() {
         // Required empty public constructor
@@ -41,16 +51,32 @@ public class InboxFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false);
         rv.setLayoutManager(llm);
 
-        List<String> titles = new ArrayList<>();
-        List<String> descriptions = new ArrayList<>();
+        EasySQL easySQL = new EasySQL(requireContext());
+        SharedPreferences prefs = requireContext().getSharedPreferences("monay_sharedpreferences", MODE_PRIVATE);
 
-        titles.add("Notice");
-        titles.add("Hi!");
+        for (String a : easySQL.getTableValues(prefs.getString("user_email", "").replace("@", "").replace(".", "") + "_inbox_db", prefs.getString("user_email", "").replace("@", "").replace(".", "") + "_inbox_table")){
+            String[] split = a.split(":");
+            if (split[0].equals("inbox_title")){
+                titles.add(split[1].substring(1, split[1].length() - 1));
+            }
+            if (split[0].equals("inbox_content")){
+                descriptions.add(split[1].substring(1, split[1].length() - 1));
+            }
+            if (split[0].equals("date_sent")){
+                dates.add(split[1].substring(1, split[1].length() - 1));
+            }
+        }
 
-        descriptions.add("Secure your account! Set a custom PIN in Profile > Settings.");
-        descriptions.add("Welcome to Monay! We are pleased to have you in our platform. Enjoy first-timer benefits by adding your email address in Profile > Settings");
-
-        InboxAdapter inboxAdapter = new InboxAdapter(titles, descriptions);
+        InboxAdapter inboxAdapter = new InboxAdapter(titles, descriptions, dates, this);
         rv.setAdapter(inboxAdapter);
+    }
+
+    @Override
+    public void click(int position) {
+        Intent intent = new Intent(requireContext(), InboxDetails.class);
+        intent.putExtra("inbox_title", titles.get(position));
+        intent.putExtra("inbox_description", descriptions.get(position));
+        intent.putExtra("inbox_date", dates.get(position));
+        startActivity(intent);
     }
 }

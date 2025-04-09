@@ -2,7 +2,6 @@ package com.salazarisaiahnoel.monay.fragments;
 
 import static com.salazarisaiahnoel.monay.activities.LoginRegister.registerFragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,10 +18,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.saiaaaaaaa.cod.normal.EasySQL;
+import com.github.saiaaaaaaa.cod.Convert;
+import com.github.saiaaaaaaa.cod.EasySQL;
 import com.salazarisaiahnoel.monay.R;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class RegisterFragment extends Fragment {
@@ -53,6 +54,11 @@ public class RegisterFragment extends Fragment {
         password = view.findViewById(R.id.passwordregister);
         registerbtn = view.findViewById(R.id.registerbtn);
 
+        Email.addValidDomainName("gmail");
+        Email.addValidDomainName("yahoo");
+        Email.addValidDomainName("outlook");
+        Email.addValidDomainExtensions("com");
+
         registerbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,15 +70,33 @@ public class RegisterFragment extends Fragment {
                 for (String s : easySQL.getTableValues("account_creds_db", "account_creds_table")){
                     if (s.split(":")[0].equals("user_email")){
                         emails.add(s.split(":")[1].substring(1, s.split(":")[1].length() - 1));
-                        System.out.println(s);
                     }
                 }
                 if (emails.contains(email.getText().toString().toLowerCase())){
                     Toast.makeText(requireContext(), "This email address is already in use.", Toast.LENGTH_SHORT).show();
                 } else {
-                    easySQL.insertToTable("account_creds_db", "account_creds_table", new String[]{"fname:" + firstname.getText().toString(), "lname:" + lastname.getText().toString(), "user_email:" + email.getText().toString().toLowerCase(), "user_password:" + password.getText().toString()});
-                    Toast.makeText(requireContext(), "Account created successfully.", Toast.LENGTH_SHORT).show();
-                    requireActivity().getSupportFragmentManager().beginTransaction().remove(registerFragment).commit();
+                    if (Email.isValid(email.getText().toString().toLowerCase())){
+                        if (!easySQL.doesTableExist("user_details_db", "user_details_table")){
+                            easySQL.createTable("user_details_db", "user_details_table", new String[]{"user_email:text", "money:float"});
+                        }
+                        if (!easySQL.doesTableExist(email.getText().toString().toLowerCase().replace("@", "").replace(".", "") + "_inbox_db", email.getText().toString().toLowerCase().replace("@", "").replace(".", "") + "_inbox_table")){
+                            easySQL.createTable(email.getText().toString().toLowerCase().replace("@", "").replace(".", "") + "_inbox_db", email.getText().toString().toLowerCase().replace("@", "").replace(".", "") + "_inbox_table", new String[]{"inbox_title:text", "inbox_content:float", "date_sent:text"});
+                        }
+                        if (!easySQL.doesTableExist(email.getText().toString().toLowerCase().replace("@", "").replace(".", "") + "_transaction_db", email.getText().toString().toLowerCase().replace("@", "").replace(".", "") + "_transaction_table")){
+                            easySQL.createTable(email.getText().toString().toLowerCase().replace("@", "").replace(".", "") + "_transaction_db", email.getText().toString().toLowerCase().replace("@", "").replace(".", "") + "_transaction_table", new String[]{"transaction_title:text", "transaction_content:float", "date_sent:text"});
+                        }
+                        easySQL.insertToTable("account_creds_db", "account_creds_table", new String[]{"fname:" + firstname.getText().toString(), "lname:" + lastname.getText().toString(), "user_email:" + email.getText().toString().toLowerCase(), "user_password:" + password.getText().toString()});
+                        easySQL.insertToTable("user_details_db", "user_details_table", new String[]{"user_email:" + email.getText().toString().toLowerCase(), "money:0"});
+                        easySQL.insertToTable(email.getText().toString().toLowerCase().replace("@", "").replace(".", "") + "_inbox_db", email.getText().toString().toLowerCase().replace("@", "").replace(".", "") + "_inbox_table", new String[]{"inbox_title:Notice", "inbox_content:Secure your account! Set a custom PIN in Profile > Settings.", "date_sent:" + Convert.dateToMMDDYY(new Date())});
+                        easySQL.insertToTable(email.getText().toString().toLowerCase().replace("@", "").replace(".", "") + "_inbox_db", email.getText().toString().toLowerCase().replace("@", "").replace(".", "") + "_inbox_table", new String[]{"inbox_title:Hi!", "inbox_content:Welcome to Monay! We are pleased to have you in our platform. Enjoy first-timer benefits by adding your email address in Profile > Settings", "date_sent:" + Convert.dateToMMDDYY(new Date())});
+
+                        // for transaction table
+                        //easySQL.insertToTable(email.getText().toString().toLowerCase().replace("@", "") + "_transaction_db", email.getText().toString().toLowerCase().replace("@", "") + "_transaction_table", new String[]{"transaction_title:Hi!", "transaction_content:Welcome to Monay! We are pleased to have you in our platform. Enjoy first-timer benefits by adding your email address in Profile > Settings", "date_sent:" + Convert.dateToMMDDYY(new Date())});
+                        Toast.makeText(requireContext(), "Account created successfully.", Toast.LENGTH_SHORT).show();
+                        requireActivity().getSupportFragmentManager().beginTransaction().remove(registerFragment).commit();
+                    } else {
+                        email.setError("Please enter a valid email.");
+                    }
                 }
             }
         });
@@ -87,5 +111,36 @@ public class RegisterFragment extends Fragment {
                 requireActivity().getSupportFragmentManager().beginTransaction().remove(registerFragment).commit();
             }
         });
+    }
+
+    public static class Email {
+
+        static List<String> validDomainNames = new ArrayList<>();
+        static List<String> validDomainExtensions = new ArrayList<>();
+
+        public static void addValidDomainName(String str){
+            validDomainNames.add(str);
+        }
+
+        public static void addValidDomainExtensions(String str){
+            validDomainExtensions.add(str);
+        }
+
+        public static boolean isValid(String str){
+            try {
+                String[] domain = str.split("@");
+                String domainName = domain[1].split("\\.")[0];
+                String domainExtension = domain[1].split("\\.")[1];
+                return validDomainNames.contains(domainName) && validDomainExtensions.contains(domainExtension);
+            } catch (Exception exception){
+                return false;
+            }
+        }
+    }
+
+    boolean isValidEmail(String email){
+        boolean f = true;
+
+        return f;
     }
 }

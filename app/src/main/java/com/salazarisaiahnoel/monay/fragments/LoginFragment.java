@@ -22,7 +22,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.saiaaaaaaa.cod.normal.EasySQL;
+import com.github.saiaaaaaaa.cod.EasySQL;
 import com.salazarisaiahnoel.monay.R;
 import com.salazarisaiahnoel.monay.activities.MainPage;
 
@@ -88,7 +88,6 @@ public class LoginFragment extends Fragment {
                     editor.putString("user_password", password.getText().toString());
                     editor.putBoolean("isLoggedIn", true);
                     editor.apply();
-                    Toast.makeText(requireContext(), "Successfully logged in.", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(requireContext(), MainPage.class));
                 } else {
                     Toast.makeText(requireContext(), "This account does not exist.", Toast.LENGTH_SHORT).show();
