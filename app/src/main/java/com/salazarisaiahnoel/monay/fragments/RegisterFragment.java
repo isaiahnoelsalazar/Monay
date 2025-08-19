@@ -18,9 +18,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.saiaaaaaaa.cod.Check;
-import com.github.saiaaaaaaa.cod.Convert;
-import com.github.saiaaaaaaa.cod.EasySQL;
+import com.github.isaiahnoelsalazar.simplefunctions.Check;
+import com.github.isaiahnoelsalazar.simplefunctions.Convert;
+import com.github.isaiahnoelsalazar.simplefunctions.EasySQL;
 import com.salazarisaiahnoel.monay.R;
 
 import java.util.ArrayList;

@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.salazarisaiahnoel.monay.MainActivity;
 import com.salazarisaiahnoel.monay.R;
 import com.salazarisaiahnoel.monay.activities.LoginRegister;
 

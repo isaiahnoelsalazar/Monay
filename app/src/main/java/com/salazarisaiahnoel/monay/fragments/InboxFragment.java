@@ -16,7 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.github.saiaaaaaaa.cod.EasySQL;
+import com.github.isaiahnoelsalazar.simplefunctions.EasySQL;
 import com.salazarisaiahnoel.monay.R;
 import com.salazarisaiahnoel.monay.activities.InboxDetails;
 import com.salazarisaiahnoel.monay.adapters.InboxAdapter;

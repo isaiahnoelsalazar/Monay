@@ -22,7 +22,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.saiaaaaaaa.cod.EasySQL;
+import com.github.isaiahnoelsalazar.simplefunctions.EasySQL;
 import com.salazarisaiahnoel.monay.R;
 import com.salazarisaiahnoel.monay.activities.MainPage;
 
